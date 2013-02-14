@@ -1,0 +1,37 @@
+OASISFormat: 0.3
+Name:        async-zmq
+Version:     0.0.1
+Synopsis:    Async Wrapper for ZMQ 2.x
+Authors:     Rudi Grinberg
+License:     LGPL-3.0 with OCaml linking exception
+Plugins:     META (0.3)
+BuildTools: ocamlbuild
+
+Library "async.zmq"
+  Path:       lib
+  BuildTools: ocamlbuild
+  Modules:    Async_zmq
+  BuildDepends: ZMQ, core, async_unix, async
+  
+Executable req
+  Path: samples
+  MainIs: req.ml
+  Install: false
+  BuildDepends: lwt-zmq, lwt.syntax
+
+Executable rep
+  Path: samples
+  MainIs: rep.ml
+  Install: false
+  BuildDepends: lwt-zmq, lwt.syntax
+
+Executable test_async_zmq
+  Path: lib_test
+  MainIs: test_async_zmq.ml
+  Install: false
+  BuildDepends: async.zmq , oUnit
+
+Test test_async_zmq
+  Run$: flag(tests)
+  command: $test_async_zmq
+  WorkingDirectory: lib_test

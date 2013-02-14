@@ -1,0 +1,45 @@
+# OASIS_START
+# DO NOT EDIT (digest: a1fa0479c0007334193169ac8bd88f80)
+# Ignore VCS directories, you can use the same kind of rule outside 
+# OASIS_START/STOP if you want to exclude directories that contains 
+# useless stuff for the build process
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library async.zmq
+"lib/async.zmq.cmxs": use_async.zmq
+<lib/*.ml{,i}>: pkg_ZMQ
+<lib/*.ml{,i}>: pkg_core
+<lib/*.ml{,i}>: pkg_async_unix
+<lib/*.ml{,i}>: pkg_async
+# Executable req
+"samples/req.byte": pkg_lwt-zmq
+"samples/req.byte": pkg_lwt.syntax
+# Executable rep
+"samples/rep.byte": pkg_lwt-zmq
+"samples/rep.byte": pkg_lwt.syntax
+<samples/*.ml{,i}>: pkg_lwt-zmq
+<samples/*.ml{,i}>: pkg_lwt.syntax
+# Executable test_async_zmq
+"lib_test/test_async_zmq.byte": use_async.zmq
+"lib_test/test_async_zmq.byte": pkg_oUnit
+"lib_test/test_async_zmq.byte": pkg_ZMQ
+"lib_test/test_async_zmq.byte": pkg_core
+"lib_test/test_async_zmq.byte": pkg_async_unix
+"lib_test/test_async_zmq.byte": pkg_async
+<lib_test/*.ml{,i}>: use_async.zmq
+<lib_test/*.ml{,i}>: pkg_oUnit
+<lib_test/*.ml{,i}>: pkg_ZMQ
+<lib_test/*.ml{,i}>: pkg_core
+<lib_test/*.ml{,i}>: pkg_async_unix
+<lib_test/*.ml{,i}>: pkg_async
+# OASIS_STOP
+<**/*.ml>: warn_Z, annot, use-menhir
+true: thread, debug
