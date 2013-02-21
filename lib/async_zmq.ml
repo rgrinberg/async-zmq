@@ -9,11 +9,16 @@ module Socket = struct
     socket : 'a ZMQ.Socket.t;
     fd : Async.Std.Fd.t; }
 
-  let of_socket socket = 
+  (* DOES NOT WORK *)
+  let of_socket_async socket = 
     let fd = ZMQ.Socket.get_fd socket in
     (Fd.Kind.infer_using_stat fd) >>| begin fun kind ->
       { socket; fd=(Fd.create kind fd (Info.of_string "bs")) }
     end
+
+  let of_socket socket kind = 
+    let fd = ZMQ.Socket.get_fd socket in
+    { socket; fd=(Fd.create kind fd (Info.of_string "<zmq>"))}
 
   let zmq_event socket ~f =
     let open ZMQ.Socket in
@@ -25,23 +30,29 @@ module Socket = struct
 
   (* TODO : fix this, extremely hairy for now *)
   let wrap f {socket;fd} =
-    let f x = return (f x) in (* how to do liftM properly? *)
+    let f x = In_thread.syscall_exn ~name:"wrap" (fun () -> f x) in
     let io_loop () =
       In_thread.syscall_exn ~name:"events" (fun () -> zmq_event socket ~f)
     in
     let rec idle_loop () =
       let open ZMQ in
-      Monitor.try_with (fun () -> f socket) >>= function
+      Monitor.try_with ~name:"GGG" (fun () -> f socket) >>= function
         | Ok x -> return x
-        | Error (ZMQ_exception (EINTR, _)) -> idle_loop ()
-        | Error (ZMQ_exception (EINTR, _)) -> begin
-          let rec inner_loop () =
-            Monitor.try_with io_loop >>= function
-              | Error(Break_event_loop) -> idle_loop ()
-              | Error(Retry) -> inner_loop ()
-              | Ok x -> x
-          in inner_loop ()
-        end
+        | Error _exn -> begin
+            match (Monitor.extract_exn _exn) with
+            | ZMQ_exception (EINTR, _) -> idle_loop ()
+            | ZMQ_exception (EAGAIN, _) -> begin
+              let rec inner_loop () =
+                Monitor.try_with io_loop >>= function
+                  | Ok x -> x
+                  | Error _exn -> begin 
+                    match (Monitor.extract_exn _exn) with
+                    | Break_event_loop -> idle_loop ()
+                    | Retry -> inner_loop ()
+                    end
+              in inner_loop ()
+              end
+            end
     in idle_loop ()
 
   let recv s =
