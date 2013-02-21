@@ -6,6 +6,15 @@ Warning
 -------
 Async-zmq is alpha quality for now.
 
+Dependencies
+------------
+```
+ocaml-zmq
+core
+async
+async_unix
+```
+
 Installation
 -------
 ```
@@ -21,3 +30,8 @@ Credits
 of lwt-zmq (you could probably write a functor over these). Improvements
 to make it more idiomatic w.r.t async are coming however.
 
+
+License
+------
+
+LGPL-3.0
