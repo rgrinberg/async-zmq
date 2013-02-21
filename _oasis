@@ -7,7 +7,7 @@ License:     LGPL-3.0 with OCaml linking exception
 Plugins:     META (0.3)
 BuildTools: ocamlbuild
 
-Library "async.zmq"
+Library "async_zmq"
   Path:       lib
   BuildTools: ocamlbuild
   Modules:    Async_zmq
@@ -17,19 +17,19 @@ Executable req
   Path: samples
   MainIs: req.ml
   Install: false
-  BuildDepends: lwt-zmq, lwt.syntax
+  BuildDepends: async_zmq, core, async_unix, async
 
 Executable rep
   Path: samples
   MainIs: rep.ml
   Install: false
-  BuildDepends: lwt-zmq, lwt.syntax
+  BuildDepends: async_zmq, core, async_unix, async
 
 Executable test_async_zmq
   Path: lib_test
   MainIs: test_async_zmq.ml
   Install: false
-  BuildDepends: async.zmq , oUnit
+  BuildDepends: async_zmq , oUnit
 
 Test test_async_zmq
   Run$: flag(tests)
