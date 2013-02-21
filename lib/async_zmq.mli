@@ -8,7 +8,7 @@ module Socket : sig
   type 'a t
 
   (** [of_socket_async s] wraps the zeromq socket [s] for use with Async. *)
-  val of_socket_async : 'a ZMQ.Socket.t -> 'a t Deferred.t
+  (*val of_socket_async : 'a ZMQ.Socket.t -> 'a t Deferred.t*)
 
   (** [of_socket s k] wraps the zeromq socket [s] with kind [k] for use with Async *)
   val of_socket : 'a ZMQ.Socket.t -> Fd.Kind.t -> 'a t

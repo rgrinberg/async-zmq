@@ -1,5 +1,6 @@
 Async-zmq
 ==========================
+Async interface to ocaml-zmq
 
 Warning
 -------
