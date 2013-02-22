@@ -9,16 +9,9 @@ module Socket = struct
     socket : 'a ZMQ.Socket.t;
     fd : Async.Std.Fd.t; }
 
-  (* DOES NOT WORK *)
-  let of_socket_async socket = 
+  let of_socket socket = 
     let fd = ZMQ.Socket.get_fd socket in
-    (Fd.Kind.infer_using_stat fd) >>| begin fun kind ->
-      { socket; fd=(Fd.create kind fd (Info.of_string "bs")) }
-    end
-
-  let of_socket socket kind = 
-    let fd = ZMQ.Socket.get_fd socket in
-    { socket; fd=(Fd.create kind fd (Info.of_string "<zmq>"))}
+    { socket; fd=(Fd.create (Fd.Kind.Socket `Bound) fd (Info.of_string "<zmq>"))}
 
   let zmq_event socket ~f =
     let open ZMQ.Socket in
