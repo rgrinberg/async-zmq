@@ -23,20 +23,20 @@ module Socket = struct
 
   (* TODO : fix this, extremely hairy for now *)
   let wrap f {socket;fd} =
-    let f x = In_thread.syscall_exn ~name:"wrap" (fun () -> f x) in
+    let f x = In_thread.syscall_exn ~name:"<wrap>" (fun () -> f x) in
     let io_loop () =
-      In_thread.syscall_exn ~name:"events" (fun () -> zmq_event socket ~f)
+      In_thread.syscall_exn ~name:"<events>" (fun () -> zmq_event socket ~f)
     in
     let rec idle_loop () =
       let open ZMQ in
-      Monitor.try_with ~name:"GGG" (fun () -> f socket) >>= function
+      Monitor.try_with ~name:"<idle_loop>" (fun () -> f socket) >>= function
         | Ok x -> return x
         | Error _exn -> begin
             match (Monitor.extract_exn _exn) with
             | ZMQ_exception (EINTR, _) -> idle_loop ()
             | ZMQ_exception (EAGAIN, _) -> begin
               let rec inner_loop () =
-                Monitor.try_with io_loop >>= function
+                Monitor.try_with ~name:"<io_loop>" io_loop >>= function
                   | Ok x -> x
                   | Error _exn -> begin 
                     match (Monitor.extract_exn _exn) with
