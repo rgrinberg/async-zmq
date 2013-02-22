@@ -22,7 +22,7 @@ module Socket = struct
          | ZMQ.ZMQ_exception (ZMQ.EINTR, _) -> raise Break_event_loop
 
   (* TODO : fix this, extremely hairy for now *)
-  let wrap f {socket;fd} =
+  let wrap f {socket;_} =
     let f x = In_thread.syscall_exn ~name:"<wrap>" (fun () -> f x) in
     let io_loop () =
       In_thread.syscall_exn ~name:"<events>" (fun () -> zmq_event socket ~f)
