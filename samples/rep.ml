@@ -1,7 +1,7 @@
 open Core.Std
 open Async.Std
 
-module AZMQ = Async_zmq.Socket
+module AZMQ = Async_zmq.Raw
 
 let rep () =
   let z = ZMQ.init () in
