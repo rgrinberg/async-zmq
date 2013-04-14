@@ -1,7 +1,7 @@
-B ./_build
-S ./lib
-S ./lib_test
-S ./samples
+B _build
+S lib
+S lib_test
+S samples
 PKG core
 PKG ZMQ
 PKG async

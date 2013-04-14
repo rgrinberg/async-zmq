@@ -3,7 +3,7 @@ Name:        async-zmq
 Version:     0.0.1
 Synopsis:    Async Wrapper for ZMQ 2.x
 Authors:     Rudi Grinberg
-License:     LGPL-3.0 with OCaml linking exception
+License:     MIT
 Plugins:     META (0.3)
 BuildTools: ocamlbuild
 
