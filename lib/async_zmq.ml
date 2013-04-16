@@ -34,7 +34,8 @@ module Raw = struct
       | Error (ZMQ_exception (EINTR, _)) -> idle_loop ()
       | Error (ZMQ_exception (EAGAIN, _)) -> begin
           let rec inner_loop () =
-            Monitor.try_with ~extract_exn:true ~name:"<io_loop>" io_loop >>= function
+            Monitor.try_with ~extract_exn:true ~name:"<io_loop>" io_loop >>=
+            function
             | Ok x -> x
             | Error Break_event_loop -> idle_loop ()
             | Error Retry -> inner_loop ()
