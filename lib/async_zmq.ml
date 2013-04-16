@@ -8,8 +8,6 @@ module Raw = struct
     socket : 'a ZMQ.Socket.t;
     fd : Async.Std.Fd.t; }
 
-  let try_extract = Monitor.try_with ~extract_exn:true
-
   let of_socket socket = 
     let fd = ZMQ.Socket.get_fd socket in
     { socket; fd=(Fd.create (Fd.Kind.Socket `Bound) fd (Info.of_string "<zmq>"))}
