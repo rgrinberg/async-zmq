@@ -36,12 +36,9 @@ module Raw = struct
           let rec inner_loop () =
             Monitor.try_with ~extract_exn:true ~name:"<io_loop>" io_loop >>= function
             | Ok x -> x
-            | Error _exn -> begin 
-                match _exn with
-                | Break_event_loop -> idle_loop ()
-                | Retry -> inner_loop ()
-                | x -> raise x (* is this necessary *)
-              end
+            | Error Break_event_loop -> idle_loop ()
+            | Error Retry -> inner_loop ()
+            | Error x -> raise x (* necessary? *)
           in inner_loop ()
         end
       | Error x -> raise x (* is this necessary? *)
