@@ -6,3 +6,6 @@ META
 _build/
 setup.ml
 setup.data
+*.native
+*.byte
+setup.log
