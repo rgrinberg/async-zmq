@@ -1,8 +1,11 @@
 B _build
+B _build/lib
+B _build/lib_test
 S lib
 S lib_test
 S samples
 PKG core
-PKG ZMQ
 PKG async
-PKG async_unix
+PKG ZMQ
+PKG sexplib
+PKG sexplib.syntax
