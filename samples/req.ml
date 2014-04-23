@@ -15,10 +15,10 @@ let req z socket =
       return ()
     ))) (fun _ ->
     ZMQ.Socket.close socket;
-    ZMQ.term z; Shutdown.shutdown 0; ())
+    Shutdown.shutdown 0; ())
 
 let () = 
-  let z = ZMQ.init () in
+  let z = ZMQ.Context.create () in
   let socket = ZMQ.Socket.create z ZMQ.Socket.req in
   ZMQ.Socket.connect socket "tcp://127.0.0.1:5555";
   req z socket; never_returns (Scheduler.go ())
