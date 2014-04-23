@@ -11,7 +11,12 @@ Library "async_zmq"
   Path:       lib
   BuildTools: ocamlbuild
   Modules:    Async_zmq
-  BuildDepends: ZMQ, core, async, sexplib, sexplib.syntax
+  BuildDepends: ZMQ, 
+                threads,
+                core,
+                async,
+                sexplib,
+                sexplib.syntax
   
 Executable req
   Path: samples
