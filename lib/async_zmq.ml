@@ -17,7 +17,11 @@ module Raw = struct
     let open ZMQ.Socket in
     try begin match events socket with
       | No_event -> raise Retry
-      | Poll_in | Poll_out | Poll_in_out -> f socket end
+      | Poll_in
+      | Poll_out
+      | Poll_in_out -> f socket
+      | Poll_error -> assert false
+    end
     with | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
          | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
