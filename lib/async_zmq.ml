@@ -6,8 +6,8 @@ module Raw = struct
   exception Retry
 
   type 'a t = {
-    socket : 'a ZMQ.Socket.t;
-    fd : Fd.t; }
+    socket : 'a ZMQ.Socket.t sexp_opaque;
+    fd : Fd.t; } with sexp_of
 
   let of_socket socket = 
     let fd = ZMQ.Socket.get_fd socket in
