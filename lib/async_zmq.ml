@@ -1,5 +1,5 @@
-open Async.Std
 open Core.Std
+open Async.Std
 
 module Raw = struct
   exception Break_event_loop
@@ -7,7 +7,7 @@ module Raw = struct
 
   type 'a t = {
     socket : 'a ZMQ.Socket.t;
-    fd : Async.Std.Fd.t; }
+    fd : Fd.t; }
 
   let of_socket socket = 
     let fd = ZMQ.Socket.get_fd socket in
