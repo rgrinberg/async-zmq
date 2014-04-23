@@ -1,9 +1,10 @@
-(** This module is meant to be as compatible as possible with lwt-zmq. 
- * It should be straight forward to write a functor over Async_zmq.Raw
- * and Lwt_zmq.Socket *)
-module Raw : sig
-  open Async.Std
+open Core.Std
+open Async.Std
 
+(** This module is meant to be as compatible as possible with lwt-zmq. It
+ * should be straight forward to write a functor over Async_zmq.Raw and
+ * Lwt_zmq.Socket *)
+module Raw : sig
   (** An Async-wrapped zeromq socket *)
   type 'a t
 
@@ -11,8 +12,8 @@ module Raw : sig
   val of_socket : 'a ZMQ.Socket.t -> 'a t
 
   (** [recv socket] waits for a message on [socket] without blocking other Async threads *)
-  val recv : 'a t -> string Async_core.Deferred.t
+  val recv : 'a t -> string Deferred.t
 
   (** [send socket] sends a message on [socket] without blocking other Async threads *)
-  val send : 'a t -> string -> unit Async_core.Deferred.t
+  val send : 'a t -> string -> unit Deferred.t
 end
