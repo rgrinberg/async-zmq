@@ -1,5 +1,6 @@
 open Async.Std
 open Core.Std
+
 module Raw = struct
   exception Break_event_loop
   exception Retry
@@ -17,8 +18,8 @@ module Raw = struct
     try begin match events socket with
       | No_event -> raise Retry
       | Poll_in | Poll_out | Poll_in_out -> f socket end
-    with | ZMQ.ZMQ_exception (ZMQ.EAGAIN, _) -> raise Retry
-         | ZMQ.ZMQ_exception (ZMQ.EINTR, _) -> raise Break_event_loop
+    with | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
+         | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
   (* TODO : fix this, extremely hairy for now *)
   let wrap f {socket;_} =
@@ -28,13 +29,13 @@ module Raw = struct
     in
     let rec idle_loop () =
       let open ZMQ in
-      Monitor.try_with ~extract_exn:true ~name:"<idle_loop>"
+      try_with ~extract_exn:true ~name:"<idle_loop>"
         (fun () -> f socket) >>= function
       | Ok x -> return x
-      | Error (ZMQ_exception (EINTR, _)) -> idle_loop ()
-      | Error (ZMQ_exception (EAGAIN, _)) -> begin
+      | Error (Unix.Unix_error (Unix.EINTR, _, _)) -> idle_loop ()
+      | Error (Unix.Unix_error (Unix.EAGAIN, _, _)) -> begin
           let rec inner_loop () =
-            Monitor.try_with ~extract_exn:true ~name:"<io_loop>" io_loop >>=
+            try_with ~extract_exn:true ~name:"<io_loop>" io_loop >>=
             function
             | Ok x -> x
             | Error Break_event_loop -> idle_loop ()
@@ -45,9 +46,7 @@ module Raw = struct
       | Error x -> raise x (* is this necessary? *)
     in idle_loop ()
 
-  let recv s =
-    wrap (fun s -> ZMQ.Socket.recv ~opt:ZMQ.Socket.R_no_block s) s
+  let recv s = wrap (fun s -> ZMQ.Socket.recv ~block:false s) s
 
-  let send s m =
-    wrap (fun s -> ZMQ.Socket.send ~opt:ZMQ.Socket.S_no_block s m) s
+  let send s m = wrap (fun s -> ZMQ.Socket.send ~block:false s m) s
 end
