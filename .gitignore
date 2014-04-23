@@ -3,4 +3,6 @@ myocamlbuild.ml
 META
 *.mldylib
 *.mllib
+_build/
 setup.ml
+setup.data
