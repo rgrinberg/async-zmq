@@ -59,4 +59,11 @@ module Raw = struct
   let recv s = wrap (fun s -> ZMQ.Socket.recv ~block:false s) s
 
   let send s m = wrap (fun s -> ZMQ.Socket.send ~block:false s m) s
+
+  let recv_all s =
+    wrap (fun s -> ZMQ.Socket.recv_all ~block:false s) s
+
+  let send_all s parts =
+    wrap (fun s -> ZMQ.Socket.send_all ~block:false s parts) s
+
 end
