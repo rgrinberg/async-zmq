@@ -2,16 +2,20 @@ open Core.Std
 open Async.Std
 
 module Raw = struct
-  exception Break_event_loop
-  exception Retry
+  exception Break_event_loop with sexp
+  exception Retry with sexp
 
   type 'a t = {
     socket : 'a ZMQ.Socket.t sexp_opaque;
     fd : Fd.t; } with sexp_of
 
   let of_socket socket = 
-    let fd = ZMQ.Socket.get_fd socket in
-    { socket; fd=(Fd.create (Fd.Kind.Socket `Bound) fd (Info.of_string "<zmq>"))}
+    let fd = 
+      Fd.create (Fd.Kind.Socket `Bound)
+        (ZMQ.Socket.get_fd socket)
+        (Info.of_string "<zmq>")
+    in
+    { socket; fd; }
 
   let zmq_event socket ~f =
     let open ZMQ.Socket in
@@ -26,7 +30,7 @@ module Raw = struct
          | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
   (* TODO : fix this, extremely hairy for now *)
-  let wrap f {socket;_} =
+  let wrap f { socket ; _ } =
     let f x = In_thread.syscall_exn ~name:"<wrap>" (fun () -> f x) in
     let io_loop () =
       In_thread.syscall_exn ~name:"<events>" (fun () -> zmq_event socket ~f)
