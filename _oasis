@@ -22,19 +22,22 @@ Library "async_zmq"
   
 Executable req
   Path: samples
+  CompiledObject: best
   MainIs: req.ml
   Install: false
-  BuildDepends: async_zmq, core, async_unix, async
+  BuildDepends: async_zmq
 
 Executable rep
   Path: samples
   MainIs: rep.ml
+  CompiledObject: best
   Install: false
-  BuildDepends: async_zmq, core, async_unix, async
+  BuildDepends: async_zmq
 
 Executable test_async_zmq
   Path: lib_test
   MainIs: test_async_zmq.ml
+  CompiledObject: best
   Install: false
   BuildDepends: async_zmq , oUnit
 
