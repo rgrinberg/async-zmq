@@ -7,7 +7,9 @@ module Raw = struct
 
   type 'a t = {
     socket : 'a ZMQ.Socket.t sexp_opaque;
-    fd : Fd.t; } with sexp_of
+    fd : Fd.t; } with sexp_of, fields
+
+  let to_socket = socket
 
   let of_socket socket = 
     let fd = 

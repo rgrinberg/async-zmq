@@ -9,3 +9,5 @@ PKG async
 PKG ZMQ
 PKG sexplib
 PKG sexplib.syntax
+PKG fieldslib.syntax
+PKG fieldslib.syntax

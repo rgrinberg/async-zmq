@@ -16,7 +16,9 @@ Library "async_zmq"
                 core,
                 async,
                 sexplib,
-                sexplib.syntax
+                sexplib.syntax,
+                fieldslib,
+                fieldslib.syntax
   
 Executable req
   Path: samples
