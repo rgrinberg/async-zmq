@@ -10,12 +10,15 @@ let rep () =
   print_endline "created zmq socket...";
   let sock = AZMQ.of_socket socket in
   print_endline "Waiting for a message";
-  upon (AZMQ.recv sock >>= (fun msg ->
-    Printf.printf "Received: '%s', sending a reply" msg;
-    AZMQ.send sock "reply"
-  )) (fun () ->
+  upon (AZMQ.recv sock >>= fun msg ->
+        Printf.printf "Received: '%s', sending a reply" msg;
+        AZMQ.send sock "reply"
+       ) (fun () ->
     ZMQ.Socket.close socket;
-    Shutdown.shutdown 0; ()
+    ZMQ.Context.terminate z;
+    Shutdown.shutdown 0;
   )
 
-let () = rep (); never_returns (Scheduler.go ())
+let () = 
+  rep (); 
+  never_returns (Scheduler.go ())
