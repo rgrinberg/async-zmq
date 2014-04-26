@@ -31,30 +31,39 @@ module Raw = struct
     with | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
          | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
-  (* TODO : fix this, extremely hairy for now *)
-  let wrap f { socket ; _ } =
-    let f x = In_thread.syscall_exn ~name:"<wrap>" (fun () -> f x) in
+  let wrap (f : _ ZMQ.Socket.t -> _) { socket ; _ } =
     let io_loop () =
-      In_thread.syscall_exn ~name:"<events>" (fun () -> zmq_event socket ~f)
+      In_thread.syscall_exn ~name:"<wrap>" (fun () ->
+        try
+          (* Check for zeromq events *)
+          match ZMQ.Socket.events socket with
+          | ZMQ.Socket.No_event -> raise Retry
+          | ZMQ.Socket.Poll_in
+          | ZMQ.Socket.Poll_out
+          | ZMQ.Socket.Poll_in_out -> f socket
+          (* This should not happen as far as I understand *)
+          | ZMQ.Socket.Poll_error -> assert false
+        with
+        (* Not ready *)
+        | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
+        (* We were interrupted so we need to start all over again *)
+        | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
+      )
     in
     let rec idle_loop () =
-      let open ZMQ in
-      try_with ~extract_exn:true ~name:"<idle_loop>"
-        (fun () -> f socket) >>= function
+      (* why are we running things in a monitor here? *)
+      try_with ~extract_exn:true (fun () -> return (f socket)) >>= function
       | Ok x -> return x
       | Error (Unix.Unix_error (Unix.EINTR, _, _)) -> idle_loop ()
-      | Error (Unix.Unix_error (Unix.EAGAIN, _, _)) -> begin
-          let rec inner_loop () =
-            try_with ~extract_exn:true ~name:"<io_loop>" io_loop >>=
-            function
-            | Ok x -> x
-            | Error Break_event_loop -> idle_loop ()
-            | Error Retry -> inner_loop ()
-            | Error x -> raise x (* necessary? *)
-          in inner_loop ()
+      | Error (Unix.Unix_error (Unix.EAGAIN, _, _)) ->
+        begin try_with ~extract_exn:true io_loop >>= function
+        | Ok x -> return x
+        | Error Break_event_loop -> idle_loop ()
+        | Error x -> raise x
         end
-      | Error x -> raise x (* is this necessary? *)
-    in idle_loop ()
+      | Error x -> raise x
+    in
+    idle_loop ()
 
   let recv s = wrap (fun s -> ZMQ.Socket.recv ~block:false s) s
 
