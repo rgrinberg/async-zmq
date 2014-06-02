@@ -28,7 +28,7 @@ module Socket = struct
       | Poll_in_out -> f socket
       | Poll_error -> assert false
     end
-    with 
+    with
     | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
     | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
@@ -59,6 +59,7 @@ module Socket = struct
       | Error (Unix.Unix_error (Unix.EAGAIN, _, _)) ->
         begin try_with ~extract_exn:true io_loop >>= function
         | Ok x -> return x
+        | Error Retry
         | Error Break_event_loop -> idle_loop ()
         | Error x -> raise x
         end
