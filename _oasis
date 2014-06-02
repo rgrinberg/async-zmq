@@ -33,15 +33,3 @@ Executable rep
   CompiledObject: best
   Install: false
   BuildDepends: async_zmq
-
-Executable test_async_zmq
-  Path: lib_test
-  MainIs: test_async_zmq.ml
-  CompiledObject: best
-  Install: false
-  BuildDepends: async_zmq
-
-Test test_async_zmq
-  Run$: flag(tests)
-  command: $test_async_zmq
-  WorkingDirectory: lib_test
