@@ -1,2 +1,2 @@
 #!/bin/sh
-opam install -y oasis core async ounit sexplib fieldslib zmq
+opam install -y oasis core async sexplib fieldslib zmq
