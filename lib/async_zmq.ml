@@ -28,8 +28,9 @@ module Socket = struct
       | Poll_in_out -> f socket
       | Poll_error -> assert false
     end
-    with | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
-         | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
+    with 
+    | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
+    | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
   let wrap (f : _ ZMQ.Socket.t -> _) { socket ; _ } =
     let io_loop () =
