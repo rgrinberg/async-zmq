@@ -1,7 +1,7 @@
 open Core.Std
 open Async.Std
 
-module AZMQ = Async_zmq.Raw
+module AZMQ = Async_zmq.Socket
 
 let req z socket =
   print_endline "created zmq socket...";

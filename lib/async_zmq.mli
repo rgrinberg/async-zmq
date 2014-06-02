@@ -2,9 +2,9 @@ open Core.Std
 open Async.Std
 
 (** This module is meant to be as compatible as possible with lwt-zmq. It
-    should be straight forward to write a functor over Async_zmq.Raw and
+    should be straight forward to write a functor over Async_zmq.Socket and
     Lwt_zmq.Socket *)
-module Raw : sig
+module Socket : sig
   (** An Async-wrapped zeromq socket *)
   type 'a t with sexp_of
 

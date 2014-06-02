@@ -1,7 +1,7 @@
 open Core.Std
 open Async.Std
 
-module Raw = struct
+module Socket = struct
   exception Break_event_loop with sexp
   exception Retry with sexp
 
