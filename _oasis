@@ -11,7 +11,7 @@ Library "async_zmq"
   Path:       lib
   BuildTools: ocamlbuild
   Modules:    Async_zmq
-  BuildDepends: ZMQ, 
+  BuildDepends: ZMQ,
                 threads,
                 core,
                 async,
