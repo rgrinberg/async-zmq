@@ -29,4 +29,6 @@ module Socket : sig
   (** [send_all socket m] sends all parts of the multi-part message [m] on
       [socket] without blocking other Lwt threads *)
   val send_all : 'a t -> string list -> unit Deferred.t
+
+  val close : 'a t -> unit Deferred.t
 end

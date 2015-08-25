@@ -5,14 +5,15 @@ module Socket = struct
   exception Break_event_loop with sexp
   exception Retry with sexp
 
-  type 'a t = {
-    socket : 'a ZMQ.Socket.t sexp_opaque;
-    fd : Fd.t; } with sexp_of, fields
+  type 'a t =
+    { socket : 'a ZMQ.Socket.t sexp_opaque
+    ; fd : Fd.t }
+  with sexp_of
 
-  let to_socket = socket
+  let to_socket t = t.socket
 
-  let of_socket socket = 
-    let fd = 
+  let of_socket socket =
+    let fd =
       Fd.create (Fd.Kind.Socket `Bound)
         (ZMQ.Socket.get_fd socket)
         (Info.of_string "<zmq>")
@@ -77,4 +78,7 @@ module Socket = struct
   let send_all s parts =
     wrap (fun s -> ZMQ.Socket.send_all ~block:false s parts) s
 
+  let close { socket ; fd } =
+    ZMQ.Socket.close socket;
+    Fd.close fd
 end
