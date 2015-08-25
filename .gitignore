@@ -9,3 +9,7 @@ setup.data
 *.native
 *.byte
 setup.log
+dist/
+bug1
+req
+rep
