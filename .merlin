@@ -1,13 +1,11 @@
-B _build
-B _build/lib
-B _build/lib_test
+B dist/**
+
 S lib
 S lib_test
 S samples
+
 PKG core
 PKG async
 PKG ZMQ
-PKG sexplib
+
 PKG sexplib.syntax
-PKG fieldslib.syntax
-PKG fieldslib.syntax

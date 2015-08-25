@@ -1,50 +1,28 @@
 default: all
 
-oasis-setup:
-	oasis setup
+configure:
+	obuild configure
 
-configure: oasis-setup
-	ocaml setup.ml -configure --enable-tests
+configure-all:
+	obuild configure --enable-tests
 
-configure-all: oasis-setup
-	ocaml setup.ml -configure --enable-tests
-
-configure-no-tests:
-	oasis setup
-	ocaml setup.ml -configure
+configure-no-tests: configure
 
 build:
-	ocaml setup.ml -build
+	obuild build
 
-all: README.md
-	ocaml setup.ml -all
+all: build
 
-test: build
-	ocaml setup.ml -test
-
-doc:
-	ocaml setup.ml -doc
+test:
+	obuild test
 
 clean:
-	ocaml setup.ml -clean
-
-scrub: clean
-	ocaml setup.ml -distclean
-	rm -rf _tags
-	rm -rf myocamlbuild.ml
-	rm -rf META
-	rm -rf setup.ml
+	obuild clean
 
 install:
-	ocaml setup.ml -install
+	obuild install
 
 uninstall:
-	ocaml setup.ml -uninstall
+	ocamlfind remove async_zmq
 
-reinstall:
-	ocaml setup.ml -reinstall
-
-# README.md: README.cpp.md
-# 	cppo -n -o $@ < $<
-
-.PHONY: build all build default install uninstall
+.PHONY: build all build default install uninstall configure-all configure

@@ -1,0 +1,27 @@
+name:       async-zmq
+version:    0.1.1
+license:    MIT
+synopsis:   Async Wrapper for ZMQ 4.x
+obuild-ver: 1
+authors:    Rudi Grinberg <rudi.grinberg@gmail.com>
+
+library async_zmq
+  src-dir: lib
+  pp: camlp4o
+  modules: Async_zmq
+  build-deps: ZMQ, threads, core, async, sexplib.syntax, sexplib
+
+executable req
+  src-dir: samples
+  main-is: req.ml
+  build-deps: async_zmq
+
+executable rep
+  src-dir: samples
+  main-is: rep.ml
+  build-deps: async_zmq
+
+executable bug1
+ src-dir: samples
+ main-is: bug1.ml
+ build-deps: async_zmq
