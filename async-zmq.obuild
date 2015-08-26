@@ -1,5 +1,5 @@
 name:       async-zmq
-version:    0.1.1
+version:    0.1.0
 license:    MIT
 synopsis:   Async Wrapper for ZMQ 4.x
 obuild-ver: 1
@@ -15,13 +15,16 @@ executable req
   src-dir: samples
   main-is: req.ml
   build-deps: async_zmq
+  installable: false
 
 executable rep
   src-dir: samples
   main-is: rep.ml
   build-deps: async_zmq
+  installable: false
 
 executable bug1
- src-dir: samples
- main-is: bug1.ml
- build-deps: async_zmq
+  src-dir:     samples
+  main-is:     bug1.ml
+  build-deps:  async_zmq
+  installable: false
