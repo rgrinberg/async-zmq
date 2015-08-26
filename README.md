@@ -6,24 +6,14 @@ Warning
 -------
 Async-zmq is alpha quality for now.
 
-Dependencies
+Installation
 ------------
+
 ```
-oasis
-ocaml-zmq
-core
-async
-async_unix
+$ opam install async-zmq
 ```
 
-Installation
--------
-```
-oasis setup
-ocaml setup.ml -configure
-ocaml setup.ml -all
-ocaml setup.ml -install
-```
+Note that findlib package is `async_zmq`
 
 Credits
 -------
