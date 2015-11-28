@@ -14,11 +14,12 @@ module Socket = struct
 
   let of_socket socket =
     let fd =
-      Fd.create (Fd.Kind.Socket `Bound)
+      Fd.create
+        (Fd.Kind.Socket `Active)
         (ZMQ.Socket.get_fd socket)
         (Info.of_string "<zmq>")
     in
-    { socket; fd; }
+    { socket; fd }
 
   let zmq_event socket ~f =
     let open ZMQ.Socket in
@@ -33,24 +34,28 @@ module Socket = struct
     | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
     | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
 
-  let wrap (f : _ ZMQ.Socket.t -> _) { socket ; _ } =
+  let wrap kind (f : _ ZMQ.Socket.t -> _) { socket ; fd } =
     let io_loop () =
-      In_thread.syscall_exn ~name:"<wrap>" (fun () ->
-        try
-          (* Check for zeromq events *)
-          match ZMQ.Socket.events socket with
-          | ZMQ.Socket.No_event -> raise Retry
-          | ZMQ.Socket.Poll_in
-          | ZMQ.Socket.Poll_out
-          | ZMQ.Socket.Poll_in_out -> f socket
-          (* This should not happen as far as I understand *)
-          | ZMQ.Socket.Poll_error -> assert false
-        with
-        (* Not ready *)
-        | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
-        (* We were interrupted so we need to start all over again *)
-        | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
-      )
+      Fd.ready_to fd kind >>= function
+      | `Bad_fd -> assert false (* It's an fd we created. shouldn't be bad *)
+      | `Closed -> failwith "fd is closed"
+      | `Ready ->
+        In_thread.syscall_exn ~name:"<wrap>" (fun () ->
+          try
+            (* Check for zeromq events *)
+            match ZMQ.Socket.events socket with
+            | ZMQ.Socket.No_event -> raise Retry
+            | ZMQ.Socket.Poll_in
+            | ZMQ.Socket.Poll_out
+            | ZMQ.Socket.Poll_in_out -> f socket
+            (* This should not happen as far as I understand *)
+            | ZMQ.Socket.Poll_error -> assert false
+          with
+          (* Not ready *)
+          | Unix.Unix_error (Unix.EAGAIN, _, _) -> raise Retry
+          (* We were interrupted so we need to start all over again *)
+          | Unix.Unix_error (Unix.EINTR, _, _) -> raise Break_event_loop
+        )
     in
     let rec idle_loop () =
       (* why are we running things in a monitor here? *)
@@ -68,15 +73,15 @@ module Socket = struct
     in
     idle_loop ()
 
-  let recv s = wrap (fun s -> ZMQ.Socket.recv ~block:false s) s
+  let recv s = wrap `Read (fun s -> ZMQ.Socket.recv ~block:false s) s
 
-  let send s m = wrap (fun s -> ZMQ.Socket.send ~block:false s m) s
+  let send s m = wrap `Write (fun s -> ZMQ.Socket.send ~block:false s m) s
 
   let recv_all s =
-    wrap (fun s -> ZMQ.Socket.recv_all ~block:false s) s
+    wrap `Read (fun s -> ZMQ.Socket.recv_all ~block:false s) s
 
   let send_all s parts =
-    wrap (fun s -> ZMQ.Socket.send_all ~block:false s parts) s
+    wrap `Write (fun s -> ZMQ.Socket.send_all ~block:false s parts) s
 
   let close { socket ; fd } =
     ZMQ.Socket.close socket;
