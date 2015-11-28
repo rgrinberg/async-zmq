@@ -11,7 +11,7 @@ let req z socket =
   upon (AZMQ.send sock "REQUEST: req.ml" >>= (fun _ ->
     print_endline "Request sent. Waiting for a reply";
     AZMQ.recv sock >>= (fun reply ->
-      Printf.printf "Received: '%s'" reply;
+      Log.Global.info "Received: '%s'" reply;
       return ()
     ))) (fun _ ->
     ZMQ.Socket.close socket;
