@@ -13,3 +13,5 @@ dist/
 bug1
 req
 rep
+async-zmq.*
+test-*

@@ -28,3 +28,8 @@ executable bug1
   main-is:     bug1.ml
   build-deps:  async_zmq
   installable: false
+
+test test_req_rep
+  src-dir: lib_test
+  main-is: test_req_rep.ml
+  build-deps: async_zmq
