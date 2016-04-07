@@ -8,4 +8,4 @@ PKG core
 PKG async
 PKG ZMQ
 
-PKG sexplib.syntax
+PKG ppx_sexp_conv

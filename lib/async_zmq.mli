@@ -6,7 +6,7 @@ open Async.Std
     Lwt_zmq.Socket *)
 module Socket : sig
   (** An Async-wrapped zeromq socket *)
-  type 'a t with sexp_of
+  type 'a t [@@deriving sexp_of]
 
   (** [of_socket s] wraps the zeromq socket [s] for use with Async *)
   val of_socket : 'a ZMQ.Socket.t -> 'a t
