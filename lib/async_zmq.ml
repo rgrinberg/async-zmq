@@ -2,13 +2,12 @@ open Core.Std
 open Async.Std
 
 module Socket = struct
-  exception Break_event_loop with sexp
-  exception Retry with sexp
+  exception Break_event_loop [@@deriving sexp_of]
+  exception Retry [@@deriving sexp_of]
 
   type 'a t =
     { socket : 'a ZMQ.Socket.t sexp_opaque
-    ; fd : Fd.t }
-  with sexp_of
+    ; fd : Fd.t } [@@deriving sexp_of]
 
   let to_socket t = t.socket
 
