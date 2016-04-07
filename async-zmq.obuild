@@ -8,7 +8,7 @@ authors:    Rudi Grinberg <rudi.grinberg@gmail.com>
 library async_zmq
   src-dir: lib
   modules: Async_zmq
-  build-deps: ZMQ, threads, core, async, sexplib, ppx_sexp_conv
+  build-deps: ZMQ, threads, core, async, sexplib, ppx_sexp_conv, ppx_deriving
 
 executable req
   src-dir: samples

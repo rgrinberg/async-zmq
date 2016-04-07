@@ -21,6 +21,8 @@ depends: [
   "obuild" {build}
   "core"
   "async"
+  "ppx_sexp_conv" {build}
+  "ppx_deriving" {build}
   "sexplib"
   "zmq"
 ]
