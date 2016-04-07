@@ -1,0 +1,9 @@
+version = "%version%"
+requires = "%meta_deps%"
+
+exists_if = "%name%.cma"
+
+archive(byte) = "%name%.cma"
+archive(byte,plugin) = "%name%.cma"
+archive(native) = "%name%.cmxa"
+archive(native,plugin) = "%name%.cmxs"

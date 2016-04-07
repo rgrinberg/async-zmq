@@ -13,3 +13,17 @@ dist/
 bug1
 req
 rep
+*.cmx
+*.cma
+*.cmi
+*.cmo
+*.cmxa
+*.o
+*.cmt
+*.cmti
+*.opt
+*.run
+*.a
+*.omc
+.omakedb
+.omakedb.lock

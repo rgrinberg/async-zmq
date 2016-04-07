@@ -1,0 +1,49 @@
+NAME = async_zmq
+VERSION = 0.3.0
+USE_OCAMLFIND = true
+BYTE_ENABLED = true
+CMXS_ENABLED = $(NATIVE_ENABLED)
+OCAMLFLAGS = -g -bin-annot -thread
+
+META_DEPS[] =
+  ZMQ
+  threads
+  core
+  async
+  sexplib
+
+OCAMLPACKS = $(META_DEPS) ppx_sexp_conv ppx_deriving
+
+LIB =
+.SUBDIRS: lib
+  META: META.in
+    sed -e 's/%version%/$(VERSION)/' \
+      -e 's/%name%/$(NAME)/' \
+      -e 's/%meta_deps%/$(META_DEPS)/' $< > $@
+  FILES = async_zmq
+  LIB = $(OCamlLibrary $(NAME), $(FILES))
+  export
+
+SAMPLES =
+.SUBDIRS: samples
+  samples = bug1 rep req
+  OCAMLINCLUDES += ../lib/
+  OCAML_LIBS += ../lib/async_zmq
+  SAMPLES = $(foreach s => $(OCamlProgram $s, $s), $(samples))
+  export
+
+.PHONY:
+samples: $(SAMPLES)
+
+.DEFAULT: $(LIB)
+
+InstallTargets(p) =
+  exts = a o cmi cmt cmti cmx cmxa cmxs cma mli
+  ext_glob = $(addprefix -name *., $(exts))
+  # without the split find doesn't accept the args properly
+  flags = $(split \ ,$(concat \ -o , $(ext_glob)))
+  value $(find $p $(flags))
+
+.PHONY: install
+install: lib/META $(LIB)
+  ocamlfind install $(NAME) lib/META $(InstallTargets lib)
