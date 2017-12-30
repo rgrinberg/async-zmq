@@ -1,5 +1,5 @@
-open Core.Std
-open Async.Std
+open Core
+open Async
 
 (** This module is meant to be as compatible as possible with lwt-zmq. It
     should be straight forward to write a functor over Async_zmq.Socket and
