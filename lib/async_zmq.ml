@@ -1,5 +1,5 @@
-open Core.Std
-open Async.Std
+open Core
+open Async
 
 module Socket = struct
   exception Break_event_loop [@@deriving sexp_of]
